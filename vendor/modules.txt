@@ -1,6 +1,9 @@
 # github.com/andreburgaud/crypt2go v0.11.0
 ## explicit
 github.com/andreburgaud/crypt2go/ecb
+# github.com/xeodou/go-sqlcipher v0.0.0-20200727080346-d681773ef093
+## explicit
+github.com/xeodou/go-sqlcipher
 # golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 ## explicit
 golang.org/x/crypto/blowfish
