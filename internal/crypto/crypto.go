@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/andreburgaud/crypt2go/ecb"
+	_ "github.com/xeodou/go-sqlcipher"
 	"golang.org/x/crypto/blowfish"
 )
 
