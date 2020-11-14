@@ -1,12 +1,15 @@
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 
+CGO_LDFLAGS:=-L/usr/local/opt/openssl/lib
+CGO_CPPFLAGS:=-I/usr/local/opt/openssl/include
+
 all: test
 
 test:
-	go test ${MODFLAGS} ${TESTFLAGS} ./...
+	CGO_LDFLAGS=${CGO_LDFLAGS} CGO_CPPFLAGS=${CGO_CPPFLAGS} go test ${MODFLAGS} ${TESTFLAGS} ./...
 
 testv:
-	go test ${MODFLAGS} ${TESTFLAGS} -v ./...
+	CGO_LDFLAGS=${CGO_LDFLAGS} CGO_CPPFLAGS=${CGO_CPPFLAGS} go test ${MODFLAGS} ${TESTFLAGS} -v ./...
 
 .PHONY: all test testv
