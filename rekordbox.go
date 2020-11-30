@@ -19,7 +19,9 @@ type Track struct {
 }
 
 // GetEncryptedPassword ...
-func GetEncryptedPassword(asarPath string) (string, error) {
+func GetEncryptedPassword(appPath string) (string, error) {
+	asarPath := getAsarPath(appPath)
+
 	f, err := os.Open(asarPath)
 	if err != nil {
 		return "", fmt.Errorf("os open failed: %w", err)
@@ -36,8 +38,15 @@ func GetEncryptedPassword(asarPath string) (string, error) {
 }
 
 // OpenDatabase ...
-func OpenDatabase(filePath, encryptionKey string) (*sql.DB, error) {
-	dsn := fmt.Sprintf("file:"+filePath+"?_key=%s", encryptionKey)
+func OpenDatabase(appPath, encryptionKey string) (*sql.DB, error) {
+	appDataPath, err := getLibraryPath()
+	if err != nil {
+		return nil, fmt.Errorf("get library path failed: %w", err)
+	}
+
+	databasePath := getDatabasePath(appDataPath)
+
+	dsn := fmt.Sprintf("file:"+databasePath+"?_key=%s", encryptionKey)
 
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
