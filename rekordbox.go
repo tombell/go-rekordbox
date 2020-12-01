@@ -50,7 +50,11 @@ func GetDatabasePassword(appPath string) (string, error) {
 	password = strings.Replace(password, `"`, "", -1)
 
 	passwordBytes := []byte(password)
-	decryptedBytes := crypto.Decrypt(decodedPasswordData, passwordBytes)
+
+	decryptedBytes, err := crypto.Decrypt(decodedPasswordData, passwordBytes)
+	if err != nil {
+		return "", fmt.Errorf("crypto decrypt failed: %w", err)
+	}
 
 	return string(decryptedBytes), nil
 }
