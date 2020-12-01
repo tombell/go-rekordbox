@@ -2,11 +2,14 @@ package rekordbox
 
 import (
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/tombell/go-rekordbox/internal/crypto"
 )
 
 // Track ...
@@ -18,8 +21,20 @@ type Track struct {
 	ImagePath string
 }
 
-// GetEncryptedPassword ...
-func GetEncryptedPassword(appPath string) (string, error) {
+// GetDatabasePassword ...
+func GetDatabasePassword(appPath string) (string, error) {
+	cfg, err := parseAgentConfig()
+	if err != nil {
+		return "", fmt.Errorf("parse agent config failed: %w", err)
+	}
+
+	encodedPasswordData := cfg.Options[1][1]
+
+	decodedPasswordData, err := base64.StdEncoding.DecodeString(encodedPasswordData)
+	if err != nil {
+		return "", fmt.Errorf("base64 decode string failed: %w", err)
+	}
+
 	asarPath := getAsarPath(appPath)
 
 	f, err := os.Open(asarPath)
@@ -34,7 +49,10 @@ func GetEncryptedPassword(appPath string) (string, error) {
 	password := strings.Split(result, ": ")[1]
 	password = strings.Replace(password, `"`, "", -1)
 
-	return password, nil
+	passwordBytes := []byte(password)
+	decryptedBytes := crypto.Decrypt(decodedPasswordData, passwordBytes)
+
+	return string(decryptedBytes), nil
 }
 
 // OpenDatabase ...
